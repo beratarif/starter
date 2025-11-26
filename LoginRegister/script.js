@@ -1,16 +1,40 @@
-const loginForm = document.querySelector(".login-form");
-const registerForm = document.querySelector(".register-form");
-const showRegister = document.getElementById("show-register");
-const showLogin = document.getElementById("show-login");
+function toggleForm() {
+  document.querySelector(".login").classList.toggle("active");
+  document.querySelector(".register").classList.toggle("active");
+}
 
-showRegister.addEventListener("click", (e) => {
-  e.preventDefault();
-  loginForm.classList.remove("active");
-  registerForm.classList.add("active");
-});
+// Particle background
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-showLogin.addEventListener("click", (e) => {
-  e.preventDefault();
-  registerForm.classList.remove("active");
-  loginForm.classList.add("active");
-});
+let particles = [];
+for (let i = 0; i < 100; i++) {
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2,
+    dx: (Math.random() - 0.5) * 0.5,
+    dy: (Math.random() - 0.5) * 0.5,
+  });
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#4cc9f0";
+  particles.forEach((p) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    p.x += p.dx;
+    p.y += p.dy;
+
+    if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+  });
+  requestAnimationFrame(draw);
+}
+
+draw();

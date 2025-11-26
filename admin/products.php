@@ -83,7 +83,7 @@ if (!$giris_yapildi) {
             <div class="mb-3">
               <label class="form-label">Ürün Görseli</label>
               <input class="form-control" type="file" name="image" multiple accept="image/*" id="productImage">
-
+                  <img id="currentPreview" src="../${f.gorsel}" width="100" style>
             </div>
             <div class="mb-3">
               <label class="form-label">Ürün İsmi</label>
@@ -155,31 +155,21 @@ if (!$giris_yapildi) {
       });
     }
 
+
     async function editProduct(index) {
       const yanit = await fetch(`../backend/urun.php?islem=getir1&urun_id=${index}`);
       const yanit1Tane = await yanit.json();
-
-      const fileInput = document.getElementById('productImage');
-
-    
-
+      const currentPreview = document.getElementById('currentPreview');      
       document.getElementById('modalTitle').textContent = "Ürün Düzenle";
       document.getElementById('productIndex').value = index;
-      fileInput.addEventListener('change', (event) => {
-        const file =event.target.files[0];
-        if (file){
-          fileInput.value = `${yanit1Tane.gorsel}`;
-        }
-        else{
-          fileInput.value= "Dosya seçileedi";
-        }
-      });
       document.getElementById('productName').value = yanit1Tane.ad;
+      currentPreview.src = `../${yanit1Tane.gorsel}`;
       document.getElementById('productDesc').value = yanit1Tane.aciklama;
       document.getElementById('productPrice').value = yanit1Tane.fiyat;
       document.getElementById('productCategory').value = yanit1Tane.kategori;
       productModal.show();
     }
+
     async function deleteProduct(index) {
       if (confirm("Silinsin mi?")) {
         await fetch(`../backend/urun.php?islem=sil&urun_id=${index}`);
