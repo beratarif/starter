@@ -124,22 +124,6 @@ if (!$giris_yapildi) {
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Mock ürünler
-    let products = [{
-        image: "../img/",
-        name: "Ürün 1",
-        desc: "deneme card",
-        price: 100,
-        category: "Kategori A"
-      },
-      {
-        image: "../img/mug.jpeg",
-        name: "Ürün 2",
-        des: "deneme",
-        price: 200,
-        category: "Kategori B"
-      }
-    ];
 
 
     const productsTableBody = document.getElementById('productsTableBody');
@@ -157,7 +141,7 @@ if (!$giris_yapildi) {
       tum_urunler_json.forEach(f => {
         productsTableBody.innerHTML += `
           <tr>
-            <td><img src="../${f.gorsel}" width="100"></td>
+            <td><img id="prewiew" src="../${f.gorsel}" width="100"></td>
             <td>${f.ad}</td>
             <td>${f.aciklama}</td>
             <td>${f.fiyat} ₺</td>
@@ -171,18 +155,31 @@ if (!$giris_yapildi) {
       });
     }
 
-    function editProduct(index) {
-      const p = products[index];
+    async function editProduct(index) {
+      const yanit = await fetch(`../backend/urun.php?islem=getir1&urun_id=${index}`);
+      const yanit1Tane = await yanit.json();
+
+      const fileInput = document.getElementById('productImage');
+
+    
+
       document.getElementById('modalTitle').textContent = "Ürün Düzenle";
       document.getElementById('productIndex').value = index;
-      document.getElementById('productImage').value;
-      document.getElementById('productName').value = p.name;
-      document.getElementById('productDesc').value = p.desc;
-      document.getElementById('productPrice').value = p.price;
-      document.getElementById('productCategory').value = p.category;
+      fileInput.addEventListener('change', (event) => {
+        const file =event.target.files[0];
+        if (file){
+          fileInput.value = `${yanit1Tane.gorsel}`;
+        }
+        else{
+          fileInput.value= "Dosya seçileedi";
+        }
+      });
+      document.getElementById('productName').value = yanit1Tane.ad;
+      document.getElementById('productDesc').value = yanit1Tane.aciklama;
+      document.getElementById('productPrice').value = yanit1Tane.fiyat;
+      document.getElementById('productCategory').value = yanit1Tane.kategori;
       productModal.show();
     }
-
     async function deleteProduct(index) {
       if (confirm("Silinsin mi?")) {
         await fetch(`../backend/urun.php?islem=sil&urun_id=${index}`);

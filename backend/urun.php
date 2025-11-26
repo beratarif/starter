@@ -82,6 +82,15 @@ try {
                     'urun_id' => $urun_id
                 ]);
                 break;
+            case 'getir1':
+                $urun_id = $_GET['urun_id'];
+
+                $urun_getir1 = $pdo->prepare('SELECT * FROM urunler WHERE urun_id = :urun_id LIMIT 1');
+                $urun_getir1->execute([
+                    'urun_id' => $urun_id
+                ]);
+                echo json_encode($urun_getir1->fetch(PDO::FETCH_ASSOC));
+                break;
         }
     }
 } catch (PDOException $ex) {
