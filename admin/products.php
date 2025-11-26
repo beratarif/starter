@@ -232,7 +232,7 @@ if (!$giris_yapildi) {
 
 
 
-    // new php
+    // new repair
     renderProducts();
   </script>
 
