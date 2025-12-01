@@ -78,6 +78,11 @@ function SonrakiSayfayaGidebilirMi($sonraki_sayfa_urun_sayisi)
       color: gray;
       padding-left: 8rem;
     }
+
+    .out-of-stock {
+      opacity: .6;
+      pointer-events: none;
+    }
   </style>
 </head>
 
@@ -201,10 +206,9 @@ function SonrakiSayfayaGidebilirMi($sonraki_sayfa_urun_sayisi)
           </div>
         </div>
             `;
-            }
-            else {
+            } else {
               product_holder.innerHTML += `
-        <div class="col-md-4 col-sm-6">
+        <div class="col-md-4 col-sm-6 out-of-stock">
           <div class="card h-100 shadow-sm product-card" data-id="${u.urun_id}" style="cursor:pointer;">
             <img src="../${u.gorsel}" class="card-img-top" alt="Ürün Görseli"> 
             <div class="card-body">
