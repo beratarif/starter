@@ -78,6 +78,11 @@
       color: gray;
       padding-left: 15rem;
     }
+
+    .out-of-stock {
+      opacity: 0.6;
+      pointer-events: none;
+    }
   </style>
   </style>
 </head>
@@ -181,7 +186,7 @@
 
         for (const u of await response.json()) {
           if (u.stok > 0) {
-              product_holder.innerHTML += `
+            product_holder.innerHTML += `
         <div class="col-md-4 col-sm-6">
           <div class="card h-100 shadow-sm product-card" data-id="${u.urun_id}" style="cursor:pointer;">
             <img src="../${u.gorsel}" class="card-img-top" alt="Ürün Görseli"> 
@@ -198,8 +203,8 @@
           </div>
         </div>
             `;
-            } else {
-              product_holder.innerHTML += `
+          } else {
+            product_holder.innerHTML += `
         <div class="col-md-4 col-sm-6 out-of-stock">
           <div class="card h-100 shadow-sm product-card" data-id="${u.urun_id}" style="cursor:pointer;">
             <img src="../${u.gorsel}" class="card-img-top" alt="Ürün Görseli"> 
@@ -216,7 +221,7 @@
           </div>
         </div>
             `;
-            }
+          }
         }
 
         for (const urunKart of document.querySelectorAll(".product-card")) {
