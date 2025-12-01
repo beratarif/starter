@@ -227,7 +227,6 @@ if (!$giris_yapildi) {
           if (fileInput.files.length > 0) {
             form_data.append('gorsel', fileInput.files[0]);
           }
-
           break;
       }
 
