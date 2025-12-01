@@ -183,7 +183,8 @@ function SonrakiSayfayaGidebilirMi($sonraki_sayfa_urun_sayisi)
           for (const u of r) {
             // await bekle(125);
 
-            product_holder.innerHTML += `
+            if (u.stok > 0) {
+              product_holder.innerHTML += `
         <div class="col-md-4 col-sm-6">
           <div class="card h-100 shadow-sm product-card" data-id="${u.urun_id}" style="cursor:pointer;">
             <img src="../${u.gorsel}" class="card-img-top" alt="Ürün Görseli"> 
@@ -193,13 +194,37 @@ function SonrakiSayfayaGidebilirMi($sonraki_sayfa_urun_sayisi)
                             <div class="product-info">
               <p class="price fw-bold fs-5 mb-1">₺${u.fiyat}</p>
               </div>
-        <p class="mb-1 small">Stok: 12</p> 
+        <p class="mb-1 small">Stok: ${u.stok}</p>
 
-              <button class="btn btn-primary w-100 sepete-ekle">Sepete Ekle</button>
+        <button class="btn btn-primary w-100 sepete-ekle">Sepete Ekle</button>
             </div>
           </div>
         </div>
             `;
+            }
+            else {
+              product_holder.innerHTML += `
+        <div class="col-md-4 col-sm-6">
+          <div class="card h-100 shadow-sm product-card" data-id="${u.urun_id}" style="cursor:pointer;">
+            <img src="../${u.gorsel}" class="card-img-top" alt="Ürün Görseli"> 
+            <div class="card-body">
+              <h5 class="card-title">${u.ad}</h5>
+              <p class="card-text text-muted">${u.aciklama}</p>
+                            <div class="product-info">
+              <p class="price fw-bold fs-5 mb-1">₺${u.fiyat}</p>
+              </div>
+        <p class="mb-1 small">Stok: ${u.stok}</p>
+
+        <button class="btn btn-primary w-100 sepete-ekle disabled">Sepete Ekle</button>
+            </div>
+          </div>
+        </div>
+            `;
+            }
+
+
+
+
           }
 
           for (const urunKart of document.querySelectorAll(".product-card")) {
