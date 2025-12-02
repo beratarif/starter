@@ -1,7 +1,6 @@
 <?php
 require_once '../backend/admin_page.php';
 
-
 if (!$giris_yapildi) {
   header("location: index.html");
 }

@@ -8,8 +8,14 @@ switch ($_GET['islem']) {
         $kullanicilari_getir = $pdo->query('SELECT COUNT(*) FROM kullanicilar');
         $kullanicilar = $kullanicilari_getir->fetchColumn();
 
-        $siparisleri_getir = $pdo->query("SELECT COUNT(*) FROM siparisler WHERE durum != 'Tamamlandı'");
-        $siparisler = $siparisleri_getir->fetchColumn();
+        $stmt = $pdo->prepare("
+    SELECT COUNT(*) 
+    FROM siparisler 
+    WHERE durum NOT IN (?, ?)
+");
+        $stmt->execute(['Tamamlandı', 'İptal Edildi']);
+        $siparisler = $stmt->fetchColumn();
+
 
         $gelir_getir = $pdo->prepare("SELECT tutar FROM siparisler WHERE durum = 'Tamamlandı'");
         $gelir_getir->execute();
@@ -23,4 +29,3 @@ switch ($_GET['islem']) {
         echo json_encode(['kullanicilar' => $kullanicilar, 'siparisler' => $siparisler, 'gelir' => $gelir]);
         break;
 }
-?>

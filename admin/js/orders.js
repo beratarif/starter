@@ -21,6 +21,8 @@ async function renderOrders() {
             ? "bg-warning text-dark"
             : f.durum === "Kargolandı"
             ? "bg-info text-dark"
+            : f.durum === "İptal Edildi"
+            ? "bg-danger text-white"
             : "bg-success"
         }">
           ${f.durum}
@@ -40,6 +42,9 @@ async function renderOrders() {
               <option value="Tamamlandı" ${
                 f.durum === "Tamamlandı" ? "selected" : ""
               }>Tamamlandı</option>
+              <option value="İptal edildi" ${
+                f.durum === "İptal Edildi" ? "selected" : ""
+              }>İptal Edildi</option>
             </select>
             <button class="btn detayBtn btn-primary">Detay</button>
           </td>

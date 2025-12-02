@@ -143,7 +143,7 @@
         document.getElementById("confirmOrder").addEventListener("click", () => {
             if (!selectedMethod) {
                 Swal.fire({
-                    icon: "warning",
+                    icon: "error",
                     title: "Ödeme yöntemi seçilmedi!",
                     text: "Devam etmek için önce bir ödeme türü seçmelisin.!",
                     confirmButtonText: "Tamam",

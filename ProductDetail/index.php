@@ -150,7 +150,7 @@
 
         <div class="product-price mb-4 product-price">999₺</div>
 
-        <p class="mb-2 fw-bold price">Ürün Stoğu: 12 Adet</p>
+        <p class="mb-2 fw-bold product-stock">Ürün Stoğu: 12 Adet</p>
         <button class="btn btn-success btn-lg px-4 sepete-ekle">
           <i class="fa fa-solid fa-cart-shopping me-2"></i> Sepete Ekle
         </button>
@@ -249,7 +249,7 @@
       const urun_baslik = urun_detay.querySelector(".product-title");
       const urun_aciklama = urun_detay.querySelector(".product-description");
       const urun_fiyat = urun_detay.querySelector(".product-price");
-
+      const urun_stock = urun_detay.querySelector(".product-stock");
       const urun_id = urun_detay.dataset.id;
 
       try {
@@ -259,6 +259,7 @@
         urun_gorsel.src = `../${sonucJson.gorsel}`;
         urun_baslik.innerHTML = sonucJson.ad;
         urun_aciklama.innerHTML = sonucJson.aciklama;
+        urun_stock.innerHTML = `Mevcut Stok: ${sonucJson.stok}`;
         urun_fiyat.innerHTML = `${sonucJson.fiyat}₺`;
 
         urun_detay.querySelector(".sepete-ekle").onclick = () => {
