@@ -102,7 +102,6 @@ switch ($_GET['islem']) {
         break;
     case 'sepet_bosalt':
         $sepet_urunler_getir = $pdo->prepare('SELECT urun_id FROM siparisler WHERE kullanici_id = :kullanici_id');
-        
 
 
 
