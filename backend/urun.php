@@ -7,6 +7,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         switch ($_POST['islem']) {
             case 'ekle':
+                $stock = $_POST['stok'];
                 $ad = $_POST['ad'];
                 $aciklama = $_POST['aciklama'];
                 $fiyat = $_POST['fiyat'];
@@ -23,36 +24,54 @@ try {
                 if (move_uploaded_file($tmp_name, $uploads_dir . $yeniIsim)) {
                     $kayitYolu = "img/" . $yeniIsim;
 
-                    $urun_ekle = $pdo->prepare('INSERT INTO urunler (ad, aciklama, kategori, fiyat, gorsel, aktiflik) VALUES (:ad, :aciklama, :kategori, :fiyat, :gorsel, :aktiflik)');
-                    $urun_ekle->execute([':ad' => $ad, ':aciklama' => $aciklama, ':kategori' => $kategori, ':fiyat' => $fiyat, ':aktiflik' => 1, ':gorsel' => $kayitYolu]);
+                    $urun_ekle = $pdo->prepare('INSERT INTO urunler (stok , ad, aciklama, kategori, fiyat, gorsel, aktiflik) VALUES (:stok,:ad, :aciklama, :kategori, :fiyat, :gorsel, :aktiflik)');
+                    $urun_ekle->execute([
+                        ':stok' => $stock,
+                        ':ad' => $ad,
+                        ':aciklama' => $aciklama,
+                        ':kategori' => $kategori,
+                        ':fiyat' => $fiyat,
+                        ':gorsel' => $kayitYolu,
+                        ':aktiflik' => 1
+                    ]);
                 } else {
                     die("Dosya yüklenemedi");
                 }
-                
+
                 break;
             case 'guncelle':
                 $urun_id = $_POST['urun_id'];
+                $urun_stock = $_POST['stok'];
                 $urun_ad = $_POST['ad'];
                 $urun_aciklama = $_POST['aciklama'];
                 $urun_fiyat = $_POST['fiyat'];
                 $urun_kategori = $_POST['kategori'];
 
-                if (isset($_FILES['gorsel'])) {
-                    $uploads_dir = "../img/";
-                    $tmp_name = $_FILES["gorsel"]["tmp_name"];
-                    $uzanti = pathinfo($_FILES["gorsel"]["name"], PATHINFO_EXTENSION);
-
-                    $yeniIsim = $ad . '.' . $uzanti;
-                }
-
-                $urun_guncelle = $pdo->prepare('UPDATE urunler SET ad = :urun_ad, aciklama = :urun_aciklama, fiyat = :urun_fiyat, kategori = :urun_kategori WHERE urun_id = :urun_id');
-                $urun_guncelle->execute([
+                $gorsel_sql = '';
+                $params = [
                     'urun_id' => $urun_id,
+                    'urun_stok' => $urun_stock,
                     'urun_ad' => $urun_ad,
                     'urun_aciklama' => $urun_aciklama,
                     'urun_fiyat' => $urun_fiyat,
                     'urun_kategori' => $urun_kategori
-                ]);
+                ];
+
+                // Resim varsa ekle
+                if (isset($_FILES['gorsel']) && $_FILES['gorsel']['tmp_name'] != '') {
+                    $uploads_dir = "../img/";
+                    $tmp_name = $_FILES["gorsel"]["tmp_name"];
+                    $uzanti = pathinfo($_FILES["gorsel"]["name"], PATHINFO_EXTENSION);
+                    $yeniIsim = $urun_ad . '.' . $uzanti;
+
+                    if (move_uploaded_file($tmp_name, $uploads_dir . $yeniIsim)) {
+                        $gorsel_sql = ', gorsel = :gorsel';
+                        $params['gorsel'] = 'img/' . $yeniIsim;
+                    }
+                }
+
+                $urun_guncelle = $pdo->prepare('UPDATE urunler SET stok = :urun_stok, ad = :urun_ad, aciklama = :urun_aciklama, fiyat = :urun_fiyat, kategori = :urun_kategori' . $gorsel_sql . ' WHERE urun_id = :urun_id');
+                $urun_guncelle->execute($params);
 
                 break;
         }
@@ -122,4 +141,3 @@ try {
 } catch (PDOException $ex) {
     die('ürün hatası: ' . $ex->getMessage());
 }
-?>

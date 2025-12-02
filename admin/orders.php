@@ -1,6 +1,7 @@
 <?php
 require_once '../backend/admin_page.php';
 
+
 if (!$giris_yapildi) {
   header("location: index.html");
 }
@@ -66,16 +67,15 @@ if (!$giris_yapildi) {
           <th>ID</th>
           <th>Müşteri</th>
           <th>Tutar</th>
-          <th>Durum</th>
           <th>İşlem</th>
+          <th>Durum</th>
         </tr>
       </thead>
       <tbody id="ordersTableBody">
-        
+
       </tbody>
 
 
-<!-- selamlar lavuklar -->
     </table>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

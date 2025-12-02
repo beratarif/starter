@@ -6,46 +6,66 @@ async function renderOrders() {
 
   tbody.innerHTML = "";
 
-  yanitJson.forEach(f =>{
+  yanitJson.forEach((f) => {
     tbody.innerHTML += `
       <tr>
-        <td style="cursor:pointer;" onclick=alert(${f.siparis_id}) >${f.siparis_id}</td>
+        <td style="cursor:pointer;" onclick=window.location.href='../admin/siparis_detay.php' >${
+          f.siparis_id
+        }</td>
         <td>${f.ad_soyad}</td>
         <td>${f.tutar} ₺</td>
         
         <td>
-          <span class="badge ${
-            f.durum === "Bekliyor"
-              ? "bg-warning text-dark"
-              : f.durum === "Kargolandı"
-              ? "bg-info text-dark"
-              : "bg-success"
-          }">
-            ${f.durum}
+        <span class="badge ${
+          f.durum === "Bekliyor"
+            ? "bg-warning text-dark"
+            : f.durum === "Kargolandı"
+            ? "bg-info text-dark"
+            : "bg-success"
+        }">
+          ${f.durum}
           </span>
-        </td>
+          </td>
+          
+          <td>
+            <select class="btn btn-secondary" onchange="updateStatus(${
+              f.siparis_id
+            }, this.value)">
+              <option value="Bekliyor"   ${
+                f.durum === "Bekliyor" ? "selected" : ""
+              }>Bekliyor</option>
+              <option value="Kargolandı" ${
+                f.durum === "Kargolandı" ? "selected" : ""
+              }>Kargolandı</option>
+              <option value="Tamamlandı" ${
+                f.durum === "Tamamlandı" ? "selected" : ""
+              }>Tamamlandı</option>
+            </select>
+            <button class="btn detayBtn btn-primary">Detay</button>
+          </td>
+        
 
-        <td>
-          <select class="form-select form-select-sm" onchange="updateStatus(${f.siparis_id}, this.value)">
-            <option value="Bekliyor"   ${
-              f.durum === "Bekliyor" ? "selected" : ""
-            }>Bekliyor</option>
-            <option value="Kargolandı" ${
-              f.durum === "Kargolandı" ? "selected" : ""
-            }>Kargolandı</option>
-            <option value="Tamamlandı" ${
-              f.durum === "Tamamlandı" ? "selected" : ""
-            }>Tamamlandı</option>
-          </select>
-        </td>
       </tr>
     `;
-  })
+  });
+  // tr.querySelector(".detayBtn").onclick = () => {
+  //   document.getElementById("detay").innerHTML = `
+  //               <p><strong>Müşteri:</strong> ${f.ad_soyad}</p>
+  //               <p><strong>Ürün:</strong> ${f.urun_adi}</p>
+  //               <p><strong>Adet:</strong> ${f.adet}</p>
+  //               <p><strong>Toplam:</strong> ${f.tutar}₺</p>
+  //               <p><strong>Ödeme Yöntemi:</strong> ${f.odeme_yontemi}</p>
+  //               <p><strong>Durum:</strong> ${f.durum}</p>
+  //           `;
+  //   new bootstrap.Modal(document.getElementById("detayModal")).show();
+  // };
 }
 
 async function updateStatus(index, newStatus) {
-  await fetch(`../backend/siparis.php?islem=durum_degistir&siparis_id=${index}&yeni_durum=${newStatus}`);
-  
+  await fetch(
+    `../backend/siparis.php?islem=durum_degistir&siparis_id=${index}&yeni_durum=${newStatus}`
+  );
+
   renderOrders();
 }
 renderOrders();

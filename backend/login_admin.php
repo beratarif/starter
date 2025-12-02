@@ -1,7 +1,6 @@
 <?php
 require_once 'db.php';
 require_once 'session.php';
-
 try {
     $eposta = $_POST['eposta'];
     $sifre = $_POST['sifre'];

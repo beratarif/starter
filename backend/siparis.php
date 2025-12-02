@@ -1,4 +1,4 @@
-<?php 
+<?php
 header('Content-Type: application/json; charset=utf-8');
 
 require_once 'db.php';
@@ -21,4 +21,3 @@ switch ($_GET['islem']) {
         $durum_degistir->execute([':yeni_durum' => $yeni_durum, 'siparis_id' => $siparis_id]);
         break;
 }
-?>

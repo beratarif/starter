@@ -99,8 +99,8 @@ if (!$giris_yapildi) {
               <input type="number" class="form-control" id="productPrice" required />
             </div>
             <div class="mb-3">
-              <label>Stok adedi</label>
-              <input type="number" name="stok_adedi" id="stockNumber">
+              <label class="form-label">Ürün Stok</label>
+              <input type="number" name="stock" id="productStock" class="form-control">
             </div>
             <div class="mb-3">
               <label class="form-label">Kategori</label>
@@ -112,8 +112,8 @@ if (!$giris_yapildi) {
                 <option value="aksesuar">Aksesuar</option>
               </select>
             </div>
-            <button type="submit" style="display: flex;" id="confirm" class="btn btn-primary" value="ekle">Kaydet</button>
-            <button type="submit" style="display: flex;" id="update" class="btn btn-primary" value="guncelle">Güncelle</button>
+            <button type="submit" id="confirm" class="btn btn-primary" value="ekle">Kaydet</button>
+            <button type="submit" id="update" class="btn btn-primary" value="guncelle">Güncelle</button>
           </form>
         </div>
       </div>
@@ -123,127 +123,112 @@ if (!$giris_yapildi) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const productsTableBody = document.getElementById('productsTableBody');
-
     const productModalEl = document.getElementById("productModal");
     const productModal = new bootstrap.Modal(productModalEl);
-
     const productForm = document.getElementById('productForm');
+    const addProductBtn = document.getElementById('addProductBtn');
 
     async function renderProducts() {
-      const yanit = await fetch(`../backend/urun.php?islem=admin_icin_urunler`);
-      const tum_urunler_json = await yanit.json();
+      const res = await fetch('../backend/urun.php?islem=admin_icin_urunler');
+      const urunler = await res.json();
 
-      productsTableBody.innerHTML = "";
-      tum_urunler_json.forEach(f => {
-        productsTableBody.innerHTML += `
-          <tr>
-            <td><img id="prewiew" src="../${f.gorsel}" width="100"></td>
-            <td>${f.ad}</td>
-            <td>${f.aciklama}</td>
-            <td>${f.fiyat} ₺</td>
-            <td>${f.kategori}</td>
-            <td>${f.stock}</td>
-            <td>
-              <button class="btn btn-warning btn-sm me-1" id="edit" onclick="editProduct(${f.urun_id})">Düzenle</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteProduct(${f.urun_id})">Sil</button>
-            </td>
-          </tr>
-        `;
+      productsTableBody.innerHTML = '';
+
+      urunler.forEach(f => {
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `
+      <td><img src="../${f.gorsel}" width="100"></td>
+      <td>${f.ad}</td>
+      <td>${f.aciklama}</td>
+      <td>${f.fiyat} ₺</td>
+      <td>${f.kategori}</td>
+      <td>${f.stok}</td>
+      <td>
+        <button class="btn btn-warning btn-sm me-1 editBtn">Düzenle</button>
+        <button class="btn btn-danger btn-sm deleteBtn">Sil</button>
+      </td>
+    `;
+
+        // Düzenle butonu
+        tr.querySelector('.editBtn').addEventListener('click', () => editProduct(f.urun_id));
+
+        // Silme butonu
+        tr.querySelector('.deleteBtn').addEventListener('click', async () => {
+          if (confirm("Silinsin mi?")) {
+            await fetch(`../backend/urun.php?islem=sil&urun_id=${f.urun_id}`);
+            renderProducts();
+          }
+        });
+
+        productsTableBody.appendChild(tr);
       });
-      document.getElementById('edit').addEventListener("click", () => {
-        productForm.reset();
-        document.getElementById('confirm').style.display = "none";
-        document.getElementById('update').style.display = "flex";
-        document.getElementById('productIndex').value = "";
-        document.getElementById('modalTitle').textContent = "Ürünü Güncelle";
-        productModal.show();
-      });
     }
 
-
-    async function editProduct(index) {
-      const yanit = await fetch(`../backend/urun.php?islem=getir1&urun_id=${index}`);
-      const yanit1Tane = await yanit.json();
-      const currentPreview = document.getElementById('currentPreview');
-      document.getElementById('modalTitle').textContent = "Ürün Düzenle";
-      document.getElementById('productIndex').value = index;
-      document.getElementById('productName').value = yanit1Tane.ad;
-      currentPreview.src = `../${yanit1Tane.gorsel}`;
-      document.getElementById('productDesc').value = yanit1Tane.aciklama;
-      document.getElementById('productPrice').value = yanit1Tane.fiyat;
-      document.getElementById('productCategory').value = yanit1Tane.kategori;
-      productModal.show();
-    }
-
-    async function deleteProduct(index) {
-      if (confirm("Silinsin mi?")) {
-        await fetch(`../backend/urun.php?islem=sil&urun_id=${index}`);
-        renderProducts();
-      }
-    }
-
-    document.getElementById('addProductBtn').addEventListener('click', () => {
+    addProductBtn.addEventListener('click', () => {
       productForm.reset();
-      document.getElementById('update').style.display = "none";
-      document.getElementById('confirm').style.display = "flex";
+      document.getElementById('confirm').style.display = "flex"; // Kaydet
+      document.getElementById('update').style.display = "none"; // Güncelle gizle
       document.getElementById('productIndex').value = "";
       document.getElementById('modalTitle').textContent = "Ürün Ekle";
+      document.getElementById('currentPreview').src = '';
       productModal.show();
     });
 
-    // document.getElementById('edit').addEventListener("click", () => {
+    async function editProduct(urun_id) {
+      const res = await fetch(`../backend/urun.php?islem=getir1&urun_id=${urun_id}`);
+      const f = await res.json();
 
-    // });
+      productForm.reset();
+      document.getElementById('confirm').style.display = "none"; // Kaydet gizle
+      document.getElementById('update').style.display = "flex"; // Güncelle göster
+      document.getElementById('productIndex').value = urun_id;
+      document.getElementById('modalTitle').textContent = "Ürün Düzenle";
+
+      document.getElementById('productName').value = f.ad;
+      document.getElementById('productDesc').value = f.aciklama;
+      document.getElementById('productPrice').value = f.fiyat;
+      document.getElementById('productCategory').value = f.kategori;
+      document.getElementById('productStock').value = f.stok;
+
+      document.getElementById('currentPreview').src = `../${f.gorsel}`;
+
+      productModal.show();
+    }
 
     productForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const clickedBtn = e.submitter.value;
       const fileInput = document.getElementById('productImage');
+      const formData = new FormData();
 
-      const form_data = new FormData();
+      formData.append('ad', document.getElementById('productName').value);
+      formData.append('aciklama', document.getElementById('productDesc').value);
+      formData.append('fiyat', document.getElementById('productPrice').value);
+      formData.append('kategori', document.getElementById('productCategory').value);
+      formData.append('stok', document.getElementById('productStock').value);
 
-      switch (clickedBtn) {
-        case 'ekle':
-
-          form_data.append('islem', 'ekle');
-          form_data.append('ad', document.getElementById('productName').value);
-          form_data.append('aciklama', document.getElementById('productDesc').value);
-          form_data.append('fiyat', document.getElementById('productPrice').value);
-          form_data.append('kategori', document.getElementById('productCategory').value);
-
-
-
-          if (fileInput.files.length > 0) {
-            form_data.append('gorsel', fileInput.files[0]);
-          }
-
-          break;
-
-        case 'guncelle':
-          form_data.append('islem', 'guncelle');
-
-          const product_id = document.getElementById("productIndex").value;
-          form_data.append('urun_id', product_id);
-          form_data.append('ad', document.getElementById('productName').value);
-          form_data.append('aciklama', document.getElementById('productDesc').value);
-          form_data.append('fiyat', document.getElementById('productPrice').value);
-          form_data.append('kategori', document.getElementById('productCategory').value);
-
-          if (fileInput.files.length > 0) {
-            form_data.append('gorsel', fileInput.files[0]);
-          }
-          break;
+      if (fileInput.files.length > 0) {
+        formData.append('gorsel', fileInput.files[0]);
       }
 
-      await fetch("../backend/urun.php", {
-        method: "POST",
-        body: form_data
-      });
+      if (clickedBtn === 'ekle') {
+        formData.append('islem', 'ekle');
+      } else if (clickedBtn === 'guncelle') {
+        formData.append('islem', 'guncelle');
+        formData.append('urun_id', document.getElementById('productIndex').value);
+      }
 
+      await fetch('../backend/urun.php', {
+        method: 'POST',
+        body: formData
+      });
       productModal.hide();
       renderProducts();
     });
+
+    // İlk yükleme
     renderProducts();
   </script>
 
